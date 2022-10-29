@@ -98,6 +98,7 @@ def get_stock_infos(input_file_name):
     
 
 def screening(rs_rank, stock_infos, output_file_name):
+    target_counter = 0
     with open(output_file_name, mode='w') as out_f:
         for num in stock_infos.keys():
             # rs_rank 70 以上のみ対象
@@ -105,7 +106,9 @@ def screening(rs_rank, stock_infos, output_file_name):
                 continue
             data = stock_infos[num]
             if is_satisfied(data):
+                target_counter += 1
                 print (num, file=out_f)
+    return target_counter
 
 
 def main():
@@ -119,7 +122,7 @@ def main():
     print ("done")
 
     print ("screening...")
-    screening(rs_rank, stock_infos, output_file_name)
-    print ("done")
+    count = screening(rs_rank, stock_infos, output_file_name)
+    print ("done, total_stock = " + str(count))
     
 main()
