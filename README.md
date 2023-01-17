@@ -4,5 +4,8 @@ edinet_to_number.py で edinet の株式一覧から証券コード一覧を抽�
 
 # 動作環境
 - python3.7以上
-- yfinance ライブラリがインストール済み
+
+# 必要ライブラリ
+- yfinance
+- mplfinance
 
