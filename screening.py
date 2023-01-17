@@ -8,9 +8,16 @@ import yfinance as yf
 import minetrend
 import mplfinance as mf
 
+import outputhtml
+
+import matplotlib.pyplot as plt
+
 # ticker を渡して、yfinance.download を実行し、結果を返す
 def get_stock_info(num):
+    # TODO: 東証以外にも対応したい
     num_str = str(num) + ".T"
+    # TODO: 株式分割の影響も考慮して計算できるようにしたい
+    # 無理なら株式分割が１年以内にある場合はなにか print したほうがいいかもしれない
     data = yf.download(num_str, period='365d', interval = "1d")
     return data
 
@@ -40,14 +47,7 @@ def main():
             print (num, file=out_f)
     print ("done, total_stock = " + str(len(results)))
     
-main()
+#main()
 
-
-# テスト用実装
-def draw_chart(num, out_img):
-    # yfinance.download の結果から、チャートを画像に出力する
-    data = get_stock_info(num)    
-    
-
-
-    pass
+#draw_chart(7203, "")
+outputhtml.draw_finance("9984.T", "")
