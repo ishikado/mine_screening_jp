@@ -5,24 +5,16 @@ import os
 
 import matplotlib.pyplot as plt
 
-# テスト用実装
+# 直近半年のチャートを出力
 def draw_chart(num, out_img):
     # yfinance.download の結果から、チャートを画像に出力する
     # TODO: スクリーニングの時点でこの結果はダウンロード済みなので、受け取るようにしたい
     data = yf.download(num, period='365d', interval = "1d")
     # TODO: 現在の日付と、6ヶ月前の日付を入力できるようにする
-    chart = mf.plot(data,style='yahoo',type='candle',title=str(num),volume=True, xlim=('2022-07-17', '2023-01-17'), savefig = out_img)
-    # TODO: 画像ファイルに出力する
+    mf.plot(data,style='yahoo',type='candle',title=str(num),volume=True, xlim=('2022-07-17', '2023-01-17'), savefig = out_img)
     pass
 
-
-# 該当 tick の売上、収益、EPS の変化を図に出力する
-# 四年分のものと、四半期４期分のものを出したいが、とりあえず四年分のものを先に出す
-#def draw_finance(num, out_img):
-#    data = yf.Ticker(str(num))
-#    #draw_eps(data, out_img)
-#    draw_income_and_revenue(data, out_img)
-
+# 直近四四半期の eps を出力
 def draw_eps(data, out_img):
     qis = data.quarterly_income_stmt
     delited_eps = qis.loc['Diluted EPS']
@@ -32,6 +24,7 @@ def draw_eps(data, out_img):
     plt.savefig(out_img)
     
 
+# 直近四四半期の 売上と収益 を出力
 def draw_income_and_revenue(data, out_img):
     qis = data.quarterly_income_stmt
     total_revenue = qis.loc['Total Revenue']
