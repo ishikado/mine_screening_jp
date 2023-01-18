@@ -9,15 +9,14 @@ from jinja2 import Template, Environment, FileSystemLoader
 import matplotlib.pyplot as plt
 
 # 直近半年のチャートを出力
-def draw_chart(num, out_img):
+def draw_chart(ticker, stock_infos, out_img):
     # yfinance.download の結果から、チャートを画像に出力する
-    # TODO: スクリーニングの時点でこの結果はダウンロード済みなので、受け取るようにしたい
-    data = yf.download(num, period='365d', interval = "1d")
+    data = stock_infos[ticker]
     today = datetime.datetime.now()
     before6month = today - datetime.timedelta(days=182)
     start = before6month.strftime("%Y-%m-%d")
     end = today.strftime("%Y-%m-%d")
-    mf.plot(data,style='yahoo',type='candle',title=str(num),volume=True, xlim=(start, end), savefig = out_img)
+    mf.plot(data,style='yahoo',type='candle',title=str(ticker),volume=True, xlim=(start, end), savefig = out_img)
 
 
 # 直近四年の eps を出力
@@ -69,7 +68,7 @@ def draw_income_and_revenue(data, out_img):
 #   - output.html
 #
 # output.html を見ると、チャートと財務状況が一覧で見られる
-def out_html(tickers, dirname, is_jp):
+def out_html(tickers, stock_infos, dirname, is_jp):
     tickers_dir = dirname + "/" + "tickers"
     os.makedirs(tickers_dir)
     
@@ -80,7 +79,7 @@ def out_html(tickers, dirname, is_jp):
         os.makedirs(ticker_dir)
         draw_eps(data, ticker_dir + "/eps.jpg")
         draw_income_and_revenue(data, ticker_dir + "/income.jpg")
-        draw_chart(ticker, ticker_dir + "/chart.jpg")
+        draw_chart(ticker, stock_infos, ticker_dir + "/chart.jpg")
         img_base_url = "tickers/" + ticker
        
         if is_jp:
@@ -92,7 +91,6 @@ def out_html(tickers, dirname, is_jp):
         items.append((ticker, ticker_url, img_base_url + "/chart.jpg", img_base_url + "/income.jpg", img_base_url + "/eps.jpg"))
 
     # output.html を作成する
-    # directory の中を読んで、画像の数だけループを作りたい
     env = Environment(loader=FileSystemLoader('./', encoding='utf8'))
     tmpl = env.get_template('template/result.html.j2')
     rendered = tmpl.render(items = items)

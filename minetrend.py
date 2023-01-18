@@ -59,8 +59,8 @@ def is_satisfied(data, is_jp):
 def calc_rs(stock_infos):
     rs_rank = {}
     ls = []
-    for num in stock_infos.keys():
-        data = stock_infos[num]
+    for ticker in stock_infos.keys():
+        data = stock_infos[ticker]
         try:
             c = data.iloc[-1]["Close"]
             c63 = data.iloc[-1-63]["Close"]
@@ -69,16 +69,16 @@ def calc_rs(stock_infos):
             c252 = data.iloc[-1-252]["Close"]
             # 参考 : https://bullinu.com/2020/07/11/how-to-calc-relativestrength/
             rs_prime = 2 * c / c63  + c / c126 + c / c189 + c / c252
-            rs_rank[num] = rs_prime
-            ls.append((rs_prime, num))
+            rs_rank[ticker] = rs_prime
+            ls.append((rs_prime, ticker))
         except Exception as e:
             print (e)
     ls.sort(reverse=True)
     total = len(ls)
     for i in range(0, total):
-        (rs_prime, num) = ls[i]
+        (rs_prime, ticker) = ls[i]
         rank = int(round(((total - i * 1.0) / total) * 100))
-        rs_rank[num] = rank
+        rs_rank[ticker] = rank
     return rs_rank
 
 # stock_infos は ticker を key、yfinance.download の結果を value とする dict
@@ -87,11 +87,11 @@ def screening(stock_infos, is_jp):
     rs_rank = calc_rs(stock_infos)
     print ("done")
     results = []
-    for num in stock_infos.keys():
+    for ticker in stock_infos.keys():
         # rs_rank 70 以上のみ対象
-        if num in rs_rank and rs_rank[num] < 70:
+        if ticker in rs_rank and rs_rank[ticker] < 70:
             continue
-        data = stock_infos[num]
+        data = stock_infos[ticker]
         if is_satisfied(data, is_jp):
-            results.append(num)
+            results.append(ticker)
     return results
