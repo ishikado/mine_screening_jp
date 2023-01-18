@@ -7,6 +7,7 @@ import datetime
 import yfinance as yf
 import minetrend
 import mplfinance as mf
+import argparse
 
 import outputhtml
 
@@ -25,13 +26,18 @@ def get_stock_info(num):
 def get_stock_infos():
     result_dict = {}
     for num in sys.stdin:
+        num = num.strip()
         data = get_stock_info(num)
         if not data.empty:
             result_dict[num] = data
     return result_dict
 
 def main():
-    output_file_name = "out.txt"
+
+    parser = argparse.ArgumentParser(description='screening stocks')
+    parser.add_argument('-jp', type=bool, default=True)
+    args = parser.parse_args()
+    is_jp = args.jp
 
     stock_infos = get_stock_infos()
 
@@ -41,14 +47,14 @@ def main():
     # TODO: 番号だけの text を出力するモードと、ファイナンスの画像やチャートも一緒に出力するモードを実装する
 
     # ticker を text に出力する
+    # output_file_name = "out.txt"
     # with open(output_file_name, mode='w') as out_f:
     #     for num in results:
     #         print (num, file=out_f)
 
     
     output_dir = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-
-    outputhtml.out_html(stock_infos.keys(), output_dir)
+    outputhtml.out_html(results, output_dir, is_jp)
 
     print ("done, total_stock = " + str(len(results)))
 
