@@ -2,6 +2,7 @@ import datetime
 import yfinance as yf
 import mplfinance as mf
 import os
+import datetime
 
 import matplotlib.pyplot as plt
 
@@ -10,9 +11,12 @@ def draw_chart(num, out_img):
     # yfinance.download の結果から、チャートを画像に出力する
     # TODO: スクリーニングの時点でこの結果はダウンロード済みなので、受け取るようにしたい
     data = yf.download(num, period='365d', interval = "1d")
-    # TODO: 現在の日付と、6ヶ月前の日付を入力できるようにする
-    mf.plot(data,style='yahoo',type='candle',title=str(num),volume=True, xlim=('2022-07-17', '2023-01-17'), savefig = out_img)
-    pass
+    today = datetime.datetime.now()
+    before6month = today - datetime.timedelta(days=182)
+    start = today.strftime("%Y-%m-%d")
+    end = before6month.strftime("%Y-%m-%d")
+    mf.plot(data,style='yahoo',type='candle',title=str(num),volume=True, xlim=(start, end), savefig = out_img)
+
 
 # 直近四四半期の eps を出力
 def draw_eps(data, out_img):

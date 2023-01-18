@@ -49,8 +49,8 @@ def main():
     
 #main()
 
-# TODO: ディレクトリ名は日付と時間から生成するようにしたい
-outputhtml.out_html(["9984.T"], "./test_dir")
+output_dir = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+outputhtml.out_html(["9984.T"], output_dir)
 
 #draw_chart(7203, "")
 #outputhtml.draw_finance("9984.T", "")
