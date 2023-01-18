@@ -8,4 +8,4 @@ edinet_to_number.py で edinet の株式一覧から証券コード一覧を抽�
 # 必要ライブラリ
 - yfinance
 - mplfinance
-
+- jinja2

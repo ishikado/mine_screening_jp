@@ -1,0 +1,8 @@
+<html>
+  <body>
+    <h1>スクリーニング結果</h1>
+{% for item in items %}
+    <p><a href="{{ item[1] }}">{{ item[0] }}</a></p><img src="{{ item[2] }}"><img src="{{ item[3] }}"><img src="{{ item[4] }}">
+{% endfor %}
+  </body>
+</html>
