@@ -2,10 +2,11 @@ import yfinance as yf
 
 # data がスクリーニングの条件を満たしているか確認
 # data は yfinance.download の返り値
-def is_satisfied(data):
+def is_satisfied(data, is_jp):
     # 現在の値段を取り出し
     for i, r in data.tail(1).iterrows():
         price = float(r["Close"])
+        
     high_52w = -1
     low_52w = 10000000
     sma50 = 0
@@ -34,8 +35,13 @@ def is_satisfied(data):
         sma200 += float(r["Close"])
     sma200 /= 200
 
-    if not (price >= 500):
-        return False
+    if is_jp:
+        if not (price >= 500):
+            return False
+    else:
+        if not (price >= 10):
+            return False
+        
 
     if not (price >= sma50 and sma50 >= sma150 and sma150 >= sma200):
         return False
@@ -76,7 +82,7 @@ def calc_rs(stock_infos):
     return rs_rank
 
 # stock_infos は ticker を key、yfinance.download の結果を value とする dict
-def screening(stock_infos):
+def screening(stock_infos, is_jp):
     print ("calc rs...")
     rs_rank = calc_rs(stock_infos)
     print ("done")
@@ -86,6 +92,6 @@ def screening(stock_infos):
         if num in rs_rank and rs_rank[num] < 70:
             continue
         data = stock_infos[num]
-        if is_satisfied(data):
+        if is_satisfied(data, is_jp):
             results.append(num)
     return results

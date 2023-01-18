@@ -34,14 +34,14 @@ def get_stock_infos():
 def main():
 
     parser = argparse.ArgumentParser(description='screening stocks')
-    parser.add_argument('-jp', type=bool, default=True)
+    parser.add_argument('-jp', action='store_true')
     args = parser.parse_args()
     is_jp = args.jp
 
     stock_infos = get_stock_infos()
 
     print ("screening...")
-    results = minetrend.screening(stock_infos)
+    results = minetrend.screening(stock_infos, is_jp)
 
     output_dir = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     os.makedirs(output_dir)

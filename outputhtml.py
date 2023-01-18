@@ -38,10 +38,6 @@ def draw_income_and_revenue(data, out_img):
 
     years = ([str(k).split(" ")[0] for k in list(reversed(list(total_revenue.keys())))])
 
-    # print total revenue for past four years.
-    #for k in total_revenue.keys():
-    #    print (total_revenue[k])
-
     x1 = [1, 2, 3, 4]
     x2 = [1.3, 2.3, 3.3, 4.3]
 
