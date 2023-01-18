@@ -8,6 +8,7 @@ import yfinance as yf
 import minetrend
 import mplfinance as mf
 import argparse
+import os
 
 import outputhtml
 
@@ -15,8 +16,6 @@ import matplotlib.pyplot as plt
 
 # ticker を渡して、yfinance.download を実行し、結果を返す
 def get_stock_info(num):
-    # TODO: 東証以外にも対応したい
-    #num_str = str(num) + ".T"
     # TODO: 株式分割の影響も考慮して計算できるようにしたい
     # 無理なら株式分割が１年以内にある場合はなにか print したほうがいいかもしれない
     data = yf.download(num, period='365d', interval = "1d")
@@ -44,25 +43,17 @@ def main():
     print ("screening...")
     results = minetrend.screening(stock_infos)
 
-    # TODO: 番号だけの text を出力するモードと、ファイナンスの画像やチャートも一緒に出力するモードを実装する
-
-    # ticker を text に出力する
-    # output_file_name = "out.txt"
-    # with open(output_file_name, mode='w') as out_f:
-    #     for num in results:
-    #         print (num, file=out_f)
-
-    
     output_dir = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    os.makedirs(output_dir)
+    # ticker を text に出力する
+    output_text = output_dir + "/" + "out.txt"
+    with open(output_text, mode='w') as out_f:
+        for num in results:
+            print (num, file=out_f)
+    # ticker をファイナンス情報と一緒に html に出力する
     outputhtml.out_html(results, output_dir, is_jp)
 
     print ("done, total_stock = " + str(len(results)))
 
     
 main()
-
-#output_dir = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-#outputhtml.out_html(["9984.T"], output_dir)
-
-#draw_chart(7203, "")
-#outputhtml.draw_finance("9984.T", "")
