@@ -40,17 +40,19 @@ def draw_income_and_revenue(data, out_img):
 
     x1 = [1, 2, 3, 4]
     x2 = [1.3, 2.3, 3.3, 4.3]
+    ticklabels = [1.15, 2.15, 3.15, 4.15]
 
+    # データが4年分ない場合があるので、その分グラフの数を調整する
     if len(x1) > len(years):
         diff = len(x1) - len(years)
         l = len(x1)
         x1 = x1[0:l-diff]
         x2 = x2[0:l-diff]
+        ticklabels = ticklabels[0:l-diff]
      
     plt.bar(x1, list(reversed(total_revenue.to_list())), color='b', label = 'total revenue', width = 0.3)
     plt.bar(x2, list(reversed(operating_income.to_list())), color='g', label = 'operating income', width = 0.3)
     plt.legend(loc=2)
-    ticklabels = [1.15, 2.15, 3.15, 4.15][0:len(x1)]
     plt.xticks(ticklabels, years)
     plt.savefig(out_img)
     plt.clf()    
