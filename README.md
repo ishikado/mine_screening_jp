@@ -1,6 +1,22 @@
 # 概要
-ミネルヴィニのスクリーニングテンプレートを行うツール。日本株が対象。
-edinet_to_number.py で edinet の株式一覧から証券コード一覧を抽出し、screening.py に食わせて、スクリーニング条件を満たす証券コードを出力する。
+ミネルヴィニのスクリーニングテンプレートに則ったスクリーニングを行うツール。
+
+# 使い方
+## 日本株
+```
+$ python3 screening.py -jp < codes.txt
+
+$ ls 日付
+out.txt  output.html  tickers
+# output.html スクリーニング結果とファイナンス情報とチャートを描画する。
+```
+
+## 外国株
+
+```
+$ python3 screening.py < tickers.txt
+# jp オプションを外す
+```
 
 # 動作環境
 - python3.7以上

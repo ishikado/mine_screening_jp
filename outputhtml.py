@@ -83,6 +83,7 @@ def out_html(tickers, stock_infos, dirname, is_jp):
         if data.income_stmt.empty:
             continue
 
+        # for debug
         print (ticker)
 
         ticker_dir = tickers_dir + "/" + ticker
