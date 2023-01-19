@@ -74,60 +74,6 @@ def draw_operating_income(data, out_img):
     plt.savefig(out_img)
     plt.clf()    
 
-
-# # 直近四年の 売上と収益 を出力
-# def draw_income_and_revenue(data, out_img):
-
-#     total_revenue_str = 'Total Revenue'
-#     net_income_str = 'Net Income'
-#     operating_income_str = 'Operating Income'
-
-#     qis = data.income_stmt
-#     total_revenue = qis.loc[total_revenue_str]
-#     net_income = qis.loc[net_income_str]
-
-#     if operating_income_str in  qis.index:
-#         operating_income = qis.loc[operating_income_str]
-    
-#     # TODO: operating income も出したい、銀行はデータが存在しないので、その場合はグラフを描画しないことで対応したい
-    
-
-#     years = ([str(k).split(" ")[0] for k in list(reversed(list(total_revenue.keys())))])
-
-#     x1 = [1, 2, 3, 4]
-#     x2 = [1.3, 2.3, 3.3, 4.3]
-#     x3 = [1.6, 2.6, 3.6, 4.6]
-#     ticklabels = [1.3, 2.3, 3.3, 4.3]
-
-#     # データが4年分ない場合があるので、その分グラフの数を調整する
-#     if len(x1) > len(years):
-#         x1 = x1[0:len(years)]
-#         x2 = x2[0:len(years)]
-#         x3 = x3[0:len(years)]
-#         ticklabels = ticklabels[0:len(years)]
-     
-#     plt.bar(x1, list(reversed(total_revenue.to_list())), color='b', label = 'total revenue', width = 0.3)
-#     plt.bar(x2, list(reversed(net_income.to_list())), color='g', label = 'net income', width = 0.3)
-#     if operating_income_str in  qis.index:
-#         plt.bar(x3, list(reversed(operating_income.to_list())), color='r', label = 'operating income', width = 0.3)
-#     plt.legend(loc=2)
-#     plt.xticks(ticklabels, years)
-#     plt.savefig(out_img)
-#     plt.clf()    
-
-
-# dirname 以下に以下の構成でファイルを配置する
-#
-# - ${dirname}/
-#   - tickers
-#      - ${ticker}
-#         - eps.jpg
-#         - operating_income.jpg
-#         - net_income.jpg
-#         - revenue.jpg
-#         - chart.jpg
-#   - output.html
-#
 # output.html を見ると、チャートと財務状況が一覧で見られる
 def out_html(tickers, stock_infos, dirname, is_jp):
     tickers_dir = dirname + "/" + "tickers"
