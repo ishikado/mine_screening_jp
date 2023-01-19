@@ -11,16 +11,16 @@ out.txt  output.html  tickers
 # output.html スクリーニング結果とファイナンス情報とチャートを描画する。
 ```
 
-### output.html の例
-![キャプチャ](https://user-images.githubusercontent.com/933884/213460590-d639dc90-6289-4f5a-b36f-77889d41c3bb.PNG)
-
-
 ## 外国株
 
 ```
 $ python3 screening.py < tickers.txt
 # jp オプションを外す
 ```
+
+# output.html の例
+![キャプチャ](https://user-images.githubusercontent.com/933884/213460590-d639dc90-6289-4f5a-b36f-77889d41c3bb.PNG)
+
 
 # 動作環境
 - python3.7以上
