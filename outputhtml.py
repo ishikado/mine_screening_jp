@@ -21,40 +21,99 @@ def draw_chart(ticker, stock_infos, out_img):
 
 # 直近四年の eps を出力
 def draw_eps(data, out_img):
+    diluted_eps_str = 'Diluted EPS'
     qis = data.income_stmt
-    delited_eps = qis.loc['Diluted EPS']
+    # ない場合はグラフを作らない
+    if not diluted_eps_str in qis.index:
+        return
+
+    delited_eps = qis.loc[diluted_eps_str]
     years = ([str(k).split(" ")[0] for k in list(reversed(list(delited_eps.keys())))])
     plt.bar(years, list(reversed(delited_eps.to_list())), color='b', label = 'delited eps', width = 0.3)
     plt.legend(loc=3)
+    plt.title(diluted_eps_str)
     plt.savefig(out_img)
     plt.clf()    
 
-# 直近四年の 売上と収益 を出力
-def draw_income_and_revenue(data, out_img):
+def draw_net_income(data, out_img):
+    net_income_str = 'Net Income'
     qis = data.income_stmt
-    total_revenue = qis.loc['Total Revenue']
-    operating_income = qis.loc['Operating Income']
-
-    years = ([str(k).split(" ")[0] for k in list(reversed(list(total_revenue.keys())))])
-
-    x1 = [1, 2, 3, 4]
-    x2 = [1.3, 2.3, 3.3, 4.3]
-    ticklabels = [1.15, 2.15, 3.15, 4.15]
-
-    # データが4年分ない場合があるので、その分グラフの数を調整する
-    if len(x1) > len(years):
-        diff = len(x1) - len(years)
-        l = len(x1)
-        x1 = x1[0:l-diff]
-        x2 = x2[0:l-diff]
-        ticklabels = ticklabels[0:l-diff]
-     
-    plt.bar(x1, list(reversed(total_revenue.to_list())), color='b', label = 'total revenue', width = 0.3)
-    plt.bar(x2, list(reversed(operating_income.to_list())), color='g', label = 'operating income', width = 0.3)
-    plt.legend(loc=2)
-    plt.xticks(ticklabels, years)
+    if not net_income_str in qis.index:
+        return
+    net_income = qis.loc[net_income_str]
+    years = ([str(k).split(" ")[0] for k in list(reversed(list(net_income.keys())))])
+    plt.bar(years, list(reversed(net_income.to_list())), color='b', label = 'net income', width = 0.3)
+    plt.legend(loc=3)
+    plt.title(net_income_str)
     plt.savefig(out_img)
     plt.clf()    
+
+def draw_revenue(data, out_img):
+    total_revenue_str = 'Total Revenue'
+    qis = data.income_stmt
+    if not total_revenue_str in qis.index:
+        return
+    total_revenue = qis.loc[total_revenue_str]
+    years = ([str(k).split(" ")[0] for k in list(reversed(list(total_revenue.keys())))])
+    plt.bar(years, list(reversed(total_revenue.to_list())), color='b', label = 'total revenue', width = 0.3)
+    plt.legend(loc=3)
+    plt.title(total_revenue_str)
+    plt.savefig(out_img)
+    plt.clf()    
+
+def draw_operating_income(data, out_img):
+    operating_income_str = 'Operating Income'
+    qis = data.income_stmt
+    if not operating_income_str in  qis.index:
+        return
+    operating_income = qis.loc[operating_income_str]
+    years = ([str(k).split(" ")[0] for k in list(reversed(list(operating_income.keys())))])
+    plt.bar(years, list(reversed(operating_income.to_list())), color='b', label = 'operating income', width = 0.3)
+    plt.legend(loc=3)
+    plt.title(operating_income_str)
+    plt.savefig(out_img)
+    plt.clf()    
+
+
+# # 直近四年の 売上と収益 を出力
+# def draw_income_and_revenue(data, out_img):
+
+#     total_revenue_str = 'Total Revenue'
+#     net_income_str = 'Net Income'
+#     operating_income_str = 'Operating Income'
+
+#     qis = data.income_stmt
+#     total_revenue = qis.loc[total_revenue_str]
+#     net_income = qis.loc[net_income_str]
+
+#     if operating_income_str in  qis.index:
+#         operating_income = qis.loc[operating_income_str]
+    
+#     # TODO: operating income も出したい、銀行はデータが存在しないので、その場合はグラフを描画しないことで対応したい
+    
+
+#     years = ([str(k).split(" ")[0] for k in list(reversed(list(total_revenue.keys())))])
+
+#     x1 = [1, 2, 3, 4]
+#     x2 = [1.3, 2.3, 3.3, 4.3]
+#     x3 = [1.6, 2.6, 3.6, 4.6]
+#     ticklabels = [1.3, 2.3, 3.3, 4.3]
+
+#     # データが4年分ない場合があるので、その分グラフの数を調整する
+#     if len(x1) > len(years):
+#         x1 = x1[0:len(years)]
+#         x2 = x2[0:len(years)]
+#         x3 = x3[0:len(years)]
+#         ticklabels = ticklabels[0:len(years)]
+     
+#     plt.bar(x1, list(reversed(total_revenue.to_list())), color='b', label = 'total revenue', width = 0.3)
+#     plt.bar(x2, list(reversed(net_income.to_list())), color='g', label = 'net income', width = 0.3)
+#     if operating_income_str in  qis.index:
+#         plt.bar(x3, list(reversed(operating_income.to_list())), color='r', label = 'operating income', width = 0.3)
+#     plt.legend(loc=2)
+#     plt.xticks(ticklabels, years)
+#     plt.savefig(out_img)
+#     plt.clf()    
 
 
 # dirname 以下に以下の構成でファイルを配置する
@@ -63,7 +122,9 @@ def draw_income_and_revenue(data, out_img):
 #   - tickers
 #      - ${ticker}
 #         - eps.jpg
-#         - income.jpg
+#         - operating_income.jpg
+#         - net_income.jpg
+#         - revenue.jpg
 #         - chart.jpg
 #   - output.html
 #
@@ -75,10 +136,20 @@ def out_html(tickers, stock_infos, dirname, is_jp):
     items = []
     for ticker in tickers:
         data = yf.Ticker(ticker)
+
+        # 上場廃止の場合は finance data が取れず empty となるので無視する
+        if data.income_stmt.empty:
+            continue
+
+        print (ticker)
+
         ticker_dir = tickers_dir + "/" + ticker
         os.makedirs(ticker_dir)
         draw_eps(data, ticker_dir + "/eps.jpg")
-        draw_income_and_revenue(data, ticker_dir + "/income.jpg")
+        draw_revenue(data, ticker_dir + "/revenue.jpg")
+        draw_operating_income(data, ticker_dir + "/operating_income.jpg")
+        draw_net_income(data, ticker_dir + "/net_income.jpg")
+        #draw_income_and_revenue(data, ticker_dir + "/income.jpg")
         draw_chart(ticker, stock_infos, ticker_dir + "/chart.jpg")
         img_base_url = "tickers/" + ticker
        
@@ -88,7 +159,7 @@ def out_html(tickers, stock_infos, dirname, is_jp):
             ticker_url = "https://finance.yahoo.com/quote/" + ticker
 
         # TODO: class または dict 形式で渡す
-        items.append((ticker, ticker_url, img_base_url + "/chart.jpg", img_base_url + "/income.jpg", img_base_url + "/eps.jpg"))
+        items.append((ticker, ticker_url, img_base_url + "/chart.jpg", img_base_url + "/revenue.jpg", img_base_url + "/operating_income.jpg", img_base_url + "/net_income.jpg", img_base_url + "/eps.jpg"))
 
     # output.html を作成する
     env = Environment(loader=FileSystemLoader('./', encoding='utf8'))

@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 def get_stock_info(ticker):
     # TODO: 株式分割の影響も考慮して計算できるようにしたい
     # 無理なら株式分割が１年以内にある場合はなにか print したほうがいいかもしれない
-    data = yf.download(ticker, period='365d', interval = "1d")
+    data = yf.download(ticker, period='365d', interval = "1d", threads = False)
     return data
 
 # input_file_name から ticker を改行で区切った入力を受け取り、ticker を key、yfinance.download の結果を value とした dict を返す
@@ -51,6 +51,8 @@ def main():
         for ticker in results:
             print (ticker, file=out_f)
     # ticker をファイナンス情報と一緒に html に出力する
+    # NOTE: スクリーニング結果を入力に取り、out_html を出力するモードがあってもいいかもしない、もしくはその機能はツールを分離するなど
+    #       スクリーニングが実行できても out_html の出力部分で失敗するケースが時々見られるため
     outputhtml.out_html(results, stock_infos, output_dir, is_jp)
 
     print ("done, total_stock = " + str(len(results)))
