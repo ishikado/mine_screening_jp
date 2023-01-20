@@ -12,7 +12,6 @@ from bs4 import BeautifulSoup
 sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding='cp932')
 
 # 福証の単独上場企業の証券コードを読み込み
-# TODO: https://www.jpubb.com/list/list.php?listed=1&se=mei2&pageID=1 あたりから html を読んで証券コード一覧を取得する
 def load_fukusho():
     return load_jpubb("https://www.jpubb.com/list/list.php?listed=1&se=huk&tand=true&page=")
 
