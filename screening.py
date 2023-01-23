@@ -53,9 +53,35 @@ def main():
     # ticker をファイナンス情報と一緒に html に出力する
     # NOTE: スクリーニング結果を入力に取り、out_html を出力するモードがあってもいいかもしない、もしくはその機能はツールを分離するなど
     #       スクリーニングが実行できても out_html の出力部分で失敗するケースが時々見られるため
+    #       html_out だけ debug したいケースも多々あるので、そんな感じにしたい
     outputhtml.out_html(results, stock_infos, output_dir, is_jp)
+
+    # 企業の情報からsector及びindustryごとに何件screeningされたかを出力する
+    # NOTE: 標準出力ではなくファイルや、output_html の結果に乗せて、後で見られるようにしたほうがいいかもしれない
+    sectors = {}
+    industries = {}
+    for ticker in results:
+        tinfo = yf.Ticker(ticker)
+        if "sector" in tinfo.info:
+            s = tinfo.info["sector"]
+            if not s in sectors:
+                sectors[s] = 0
+            sectors[s] += 1
+        if "industry" in tinfo.info:
+            i = tinfo.info["industry"]
+            if not i in industries:
+                industries[i] = 0
+            industries[i] += 1
+
+    output_sectors = output_dir + "/" + "sectors.txt"
+    with open(output_sectors, mode='w') as out_f:
+        print ("industries", file=out_f)
+        print (industries, file=out_f)
+        print ("sectors", file=out_f)
+        print (sectors, file=out_f)
+    
 
     print ("done, total_stock = " + str(len(results)))
 
-    
+   
 main()

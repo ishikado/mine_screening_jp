@@ -18,55 +18,38 @@ def draw_chart(ticker, stock_infos, out_img):
     end = today.strftime("%Y-%m-%d")
     mf.plot(data,style='yahoo',type='candle',title=str(ticker),volume=True, xlim=(start, end), savefig = out_img)
 
-
 # 直近四年の eps を出力
 def draw_eps(data, out_img):
-    diluted_eps_str = 'Diluted EPS'
-    qis = data.income_stmt
-    # ない場合はグラフを作らない
-    if not diluted_eps_str in qis.index:
-        return
-
-    delited_eps = qis.loc[diluted_eps_str]
-    years = ([str(k).split(" ")[0] for k in list(reversed(list(delited_eps.keys())))])
-    plt.bar(years, list(reversed(delited_eps.to_list())), color='b', label = 'delited eps', width = 0.3)
-    plt.title(diluted_eps_str)
-    plt.savefig(out_img)
-    plt.clf()    
+    draw_finance_common('Diluted EPS', data, out_img, True)
 
 def draw_net_income(data, out_img):
-    net_income_str = 'Net Income'
-    qis = data.income_stmt
-    if not net_income_str in qis.index:
-        return
-    net_income = qis.loc[net_income_str]
-    years = ([str(k).split(" ")[0] for k in list(reversed(list(net_income.keys())))])
-    plt.bar(years, list(reversed(net_income.to_list())), color='b', label = 'net income', width = 0.3)
-    plt.title(net_income_str)
-    plt.savefig(out_img)
-    plt.clf()    
+    draw_finance_common('Net Income', data, out_img, True)
 
 def draw_revenue(data, out_img):
-    total_revenue_str = 'Total Revenue'
-    qis = data.income_stmt
-    if not total_revenue_str in qis.index:
-        return
-    total_revenue = qis.loc[total_revenue_str]
-    years = ([str(k).split(" ")[0] for k in list(reversed(list(total_revenue.keys())))])
-    plt.bar(years, list(reversed(total_revenue.to_list())), color='b', label = 'total revenue', width = 0.3)
-    plt.title(total_revenue_str)
-    plt.savefig(out_img)
-    plt.clf()    
+    draw_finance_common('Total Revenue', data, out_img, True)
 
 def draw_operating_income(data, out_img):
-    operating_income_str = 'Operating Income'
-    qis = data.income_stmt
-    if not operating_income_str in  qis.index:
+    draw_finance_common('Operating Income', data, out_img, True)
+
+def draw_finance_common(stmt_field_name, data, out_img, use_ttm):
+    income_stmt = data.income_stmt
+    qincome_stmt = data.quarterly_income_stmt
+    if not stmt_field_name in income_stmt.index:
         return
-    operating_income = qis.loc[operating_income_str]
-    years = ([str(k).split(" ")[0] for k in list(reversed(list(operating_income.keys())))])
-    plt.bar(years, list(reversed(operating_income.to_list())), color='b', label = 'operating income', width = 0.3)
-    plt.title(operating_income_str)
+    stmt_field_value = income_stmt.loc[stmt_field_name]
+    years = ([str(k).split(" ")[0] for k in list(reversed(list(stmt_field_value.keys())))])
+    drawed = list(reversed(stmt_field_value.to_list()))
+    if use_ttm and stmt_field_name in qincome_stmt.index:
+        qstmt_field_value = qincome_stmt.loc[stmt_field_name]
+        if len(qstmt_field_value.keys()) >= 4:
+            ttm = 0
+            for v in qstmt_field_value.to_list()[0:4]:
+                ttm += v
+            years.append("TTM")
+            drawed.append(ttm)
+
+    plt.bar(years, drawed, color='b', label = stmt_field_name, width = 0.3)
+    plt.title(stmt_field_name)
     plt.savefig(out_img)
     plt.clf()    
 
@@ -92,7 +75,6 @@ def out_html(tickers, stock_infos, dirname, is_jp):
         draw_revenue(data, ticker_dir + "/revenue.jpg")
         draw_operating_income(data, ticker_dir + "/operating_income.jpg")
         draw_net_income(data, ticker_dir + "/net_income.jpg")
-        #draw_income_and_revenue(data, ticker_dir + "/income.jpg")
         draw_chart(ticker, stock_infos, ticker_dir + "/chart.jpg")
         img_base_url = "tickers/" + ticker
        
