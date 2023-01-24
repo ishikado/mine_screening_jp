@@ -76,10 +76,15 @@ def main():
     output_sectors = output_dir + "/" + "sectors.txt"
     with open(output_sectors, mode='w') as out_f:
         print ("industries", file=out_f)
+        industries = sorted(industries.items(),key=lambda x:-x[1])
+        industries = dict((x, y) for x, y in industries)
         print (industries, file=out_f)
+        
         print ("sectors", file=out_f)
+        sectors = sorted(sectors.items(),key=lambda x:-x[1])
+        sectors = dict((x, y) for x, y in sectors)
         print (sectors, file=out_f)
-    
+        
 
     print ("done, total_stock = " + str(len(results)))
 
