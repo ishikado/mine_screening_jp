@@ -84,7 +84,13 @@ def out_html(tickers, stock_infos, dirname, is_jp):
             ticker_url = "https://finance.yahoo.com/quote/" + ticker
 
         # TODO: class または dict 形式で渡す
-        items.append((ticker, ticker_url, img_base_url + "/chart.jpg", img_base_url + "/revenue.jpg", img_base_url + "/operating_income.jpg", img_base_url + "/net_income.jpg", img_base_url + "/eps.jpg"))
+        items.append({"ticker" : ticker, 
+                      "ticker_url" : ticker_url,
+                      "chart_path" : img_base_url + "/chart.jpg",
+                      "revenue_path" : img_base_url + "/revenue.jpg",
+                      "operating_income_path" : img_base_url + "/operating_income.jpg",
+                      "net_income_path" : img_base_url + "/net_income.jpg",
+                      "eps_path" : img_base_url + "/eps.jpg"})
 
     # output.html を作成する
     env = Environment(loader=FileSystemLoader('./', encoding='utf8'))

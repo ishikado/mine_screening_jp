@@ -2,7 +2,30 @@
   <body>
     <h1>スクリーニング結果</h1>
 {% for item in items %}
-    <p><a href="{{ item[1] }}">{{ item[0] }}</a></p><img src="{{ item[2] }}"><img src="{{ item[3] }}"><img src="{{ item[4] }}"><img src="{{ item[5] }}"><img src="{{ item[6] }}">
+    <div>
+      <input type="checkbox" id="{{ item.ticker }}" name="{{ item.ticker }}" style="transform:scale(3.0);">
+      <p><a href="{{ item.ticker_url }}">{{ item.ticker }}</a></p><img src="{{ item.chart_path }}"><img src="{{ item.revenue_path }}"><img src="{{ item.operating_income_path }}"><img src="{{ item.net_income_path }}"><img src="{{ item.eps_path }}">
+    </div>
 {% endfor %}
+    <div>
+      <input type="button" value="output csv for yahoo finance portfolio" onclick="onClick();"/>
+    </div>
+    <div>
+      <textarea id="output" name="output" rows="5" cols="33"></textarea>
+    </div>
   </body>
+  <script>
+    function onClick() {
+        const items = {{ items | tojson }};
+        var output = "Symbol,Current Price,Date,Time,Change,Open,High,Low,Volume,Trade Date,Purchase Price,Quantity,Commission,High Limit,Low Limit,Comment"
+        items.forEach((item) => {
+            var e = document.getElementById(item.ticker)
+            if (e.checked) {
+                output += "\n" + item.ticker + ",,,,,,,,,,,,,,,"
+            }
+        });
+        var o = document.getElementById("output")
+        o.value = output
+    }
+  </script>
 </html>
