@@ -4,11 +4,13 @@ edinet_to_number.py の出力を numbers.txt から読み込み、スクリー�
 
 import sys
 import datetime
+import time
 import yfinance as yf
 import minetrend
 import mplfinance as mf
 import argparse
 import os
+from yahooquery import Ticker
 
 import outputhtml
 
@@ -31,44 +33,32 @@ def get_stock_infos():
             result_dict[ticker] = data
     return result_dict
 
-def main():
-
-    parser = argparse.ArgumentParser(description='screening stocks')
-    parser.add_argument('-jp', action='store_true')
-    args = parser.parse_args()
-    is_jp = args.jp
-
-    stock_infos = get_stock_infos()
-
-    print ("screening...")
-    results = minetrend.screening(stock_infos, is_jp)
-
-    output_dir = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-    os.makedirs(output_dir)
-    # ticker を text に出力する
-    output_text = output_dir + "/" + "out.txt"
-    with open(output_text, mode='w') as out_f:
-        for ticker in results:
-            print (ticker, file=out_f)
-    # ticker をファイナンス情報と一緒に html に出力する
-    # NOTE: スクリーニング結果を入力に取り、out_html を出力するモードがあってもいいかもしない、もしくはその機能はツールを分離するなど
-    #       スクリーニングが実行できても out_html の出力部分で失敗するケースが時々見られるため
-    #       html_out だけ debug したいケースも多々あるので、そんな感じにしたい
-    outputhtml.out_html(results, stock_infos, output_dir, is_jp)
-
-    # 企業の情報からsector及びindustryごとに何件screeningされたかを出力する
-    # NOTE: 標準出力ではなくファイルや、output_html の結果に乗せて、後で見られるようにしたほうがいいかもしれない
+def output_sectorinfos(tickers, output_dir):
     sectors = {}
     industries = {}
-    for ticker in results:
-        tinfo = yf.Ticker(ticker)
-        if "sector" in tinfo.info:
-            s = tinfo.info["sector"]
+    for ticker in tickers:
+        # query を送りすぎるとアクセス制限をくらうようなので、sleep して間隔をあける
+        # 制限をくらいすぎる場合、sleep 間隔を考えたほうがいいかもしれない
+        time.sleep(5)
+
+        print (ticker) # for debug
+        tinfo = Ticker(ticker)
+        aprofile = tinfo.asset_profile
+
+        # リクエスト制限をくらった可能性あり
+        if not ticker in aprofile:
+            print (ticker +"'s asset profile not found")
+            continue
+
+        info = aprofile[ticker]
+
+        if "sector" in info:
+            s = info["sector"]
             if not s in sectors:
                 sectors[s] = 0
             sectors[s] += 1
-        if "industry" in tinfo.info:
-            i = tinfo.info["industry"]
+        if "industry" in info:
+            i = info["industry"]
             if not i in industries:
                 industries[i] = 0
             industries[i] += 1
@@ -84,7 +74,36 @@ def main():
         sectors = sorted(sectors.items(),key=lambda x:-x[1])
         sectors = dict((x, y) for x, y in sectors)
         print (sectors, file=out_f)
-        
+
+def main():
+    
+    parser = argparse.ArgumentParser(description='screening stocks')
+    parser.add_argument('-jp', action='store_true')
+    args = parser.parse_args()
+    is_jp = args.jp
+
+    stock_infos = get_stock_infos()
+
+    print ("screening...")
+    results = minetrend.screening(stock_infos, is_jp)
+    print ("done")
+
+    output_dir = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    os.makedirs(output_dir)
+    # ticker を text に出力する
+    output_text = output_dir + "/" + "out.txt"
+    with open(output_text, mode='w') as out_f:
+        for ticker in results:
+            print (ticker, file=out_f)
+    # ticker をファイナンス情報と一緒に html に出力する
+    # NOTE: スクリーニング結果を入力に取り、out_html を出力するモードがあってもいいかもしない、もしくはその機能はツールを分離するなど
+    #       スクリーニングが実行できても out_html の出力部分で失敗するケースが時々見られるため
+    #       html_out だけ debug したいケースも多々あるので、そんな感じにしたい
+    outputhtml.out_html(results, stock_infos, output_dir, is_jp)
+
+    # 企業の情報からsector及びindustryごとに何件screeningされたかを出力する
+    # TODO: 動作確認
+    output_sectorinfos(stock_infos.keys(), output_dir)
 
     print ("done, total_stock = " + str(len(results)))
 

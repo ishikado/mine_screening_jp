@@ -29,3 +29,5 @@ $ python3 screening.py < tickers.txt
 - yfinance
 - mplfinance
 - jinja2
+- yahooquery
+- urllib3

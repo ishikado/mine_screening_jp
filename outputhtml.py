@@ -3,6 +3,9 @@ import yfinance as yf
 import mplfinance as mf
 import os
 import datetime
+import yahooquery
+import time
+
 
 from jinja2 import Template, Environment, FileSystemLoader
 
@@ -20,33 +23,34 @@ def draw_chart(ticker, stock_infos, out_img):
 
 # 直近四年の eps を出力
 def draw_eps(data, out_img):
-    draw_finance_common('Diluted EPS', data, out_img, True)
+    draw_finance_common('DilutedEPS', data, out_img, True)
 
 def draw_net_income(data, out_img):
-    draw_finance_common('Net Income', data, out_img, True)
+    draw_finance_common('NetIncome', data, out_img, True)
 
 def draw_revenue(data, out_img):
-    draw_finance_common('Total Revenue', data, out_img, True)
+    draw_finance_common('TotalRevenue', data, out_img, True)
 
 def draw_operating_income(data, out_img):
-    draw_finance_common('Operating Income', data, out_img, True)
+    draw_finance_common('OperatingIncome', data, out_img, True)
 
 def draw_finance_common(stmt_field_name, data, out_img, use_ttm):
-    income_stmt = data.income_stmt
-    qincome_stmt = data.quarterly_income_stmt
-    if not stmt_field_name in income_stmt.index:
+    income_stmt = data.income_statement()
+    qincome_stmt = data.income_statement(frequency="q")
+    if not stmt_field_name in income_stmt.columns:
+        # TODO ticker name も出したい
+        print ("failed to draw " + stmt_field_name)
         return
-    stmt_field_value = income_stmt.loc[stmt_field_name]
-    years = ([str(k).split(" ")[0] for k in list(reversed(list(stmt_field_value.keys())))])
-    drawed = list(reversed(stmt_field_value.to_list()))
-    if use_ttm and stmt_field_name in qincome_stmt.index:
-        qstmt_field_value = qincome_stmt.loc[stmt_field_name]
-        if len(qstmt_field_value.keys()) >= 4:
-            ttm = 0
-            for v in qstmt_field_value.to_list()[0:4]:
-                ttm += v
+
+    stmt_field_value = income_stmt[stmt_field_name]
+    years = [datetime.datetime.fromtimestamp(k / 1000 / 1000 / 1000).strftime("%Y-%m-%d") for k in income_stmt["asOfDate"].values.tolist()]
+    drawed = stmt_field_value.to_list()
+
+    if use_ttm:
+        ttm = (qincome_stmt.loc[qincome_stmt["periodType"] == "TTM", :])
+        if not ttm.empty and stmt_field_name in ttm.columns:
+            drawed.append((ttm.head()[stmt_field_name].iloc[-1]))
             years.append("TTM")
-            drawed.append(ttm)
 
     plt.bar(years, drawed, color='b', label = stmt_field_name, width = 0.3)
     plt.title(stmt_field_name)
@@ -60,10 +64,20 @@ def out_html(tickers, stock_infos, dirname, is_jp):
     
     items = []
     for ticker in tickers:
-        data = yf.Ticker(ticker)
+        # query を送りすぎるとアクセス制限をくらうようなので、sleep して間隔をあける
+        # 制限をくらいすぎる場合、sleep 間隔を考えたほうがいいかもしれない
+        time.sleep(5)
 
-        # 上場廃止の場合は finance data が取れず empty となるので無視する
-        if data.income_stmt.empty:
+        data = yahooquery.Ticker(ticker)
+
+        # 一部データは finance data が取れず str type の値となるので無視する
+        income_stmt = data.income_statement()
+        if type(income_stmt) is str:
+            print (ticker +  " data is not found, reason = " + income_stmt)
+            continue
+        # NOTE: empty になる場合はないかもしれないが、念の為
+        elif income_stmt.empty:
+            print (ticker +  " data is not found")
             continue
 
         # for debug
@@ -83,7 +97,6 @@ def out_html(tickers, stock_infos, dirname, is_jp):
         else:
             ticker_url = "https://finance.yahoo.com/quote/" + ticker
 
-        # TODO: class または dict 形式で渡す
         items.append({"ticker" : ticker, 
                       "ticker_url" : ticker_url,
                       "chart_path" : img_base_url + "/chart.jpg",
