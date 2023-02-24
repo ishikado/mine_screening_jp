@@ -89,6 +89,7 @@ def out_html(tickers, stock_infos, dirname, is_jp):
         draw_revenue(data, ticker_dir + "/revenue.jpg")
         draw_operating_income(data, ticker_dir + "/operating_income.jpg")
         draw_net_income(data, ticker_dir + "/net_income.jpg")
+        # TODO: 週足も出せるようにしたい
         draw_chart(ticker, stock_infos, ticker_dir + "/chart.jpg")
         img_base_url = "tickers/" + ticker
        

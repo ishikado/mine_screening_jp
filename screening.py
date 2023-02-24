@@ -102,7 +102,6 @@ def main():
     outputhtml.out_html(results, stock_infos, output_dir, is_jp)
 
     # 企業の情報からsector及びindustryごとに何件screeningされたかを出力する
-    # TODO: 動作確認
     output_sectorinfos(stock_infos.keys(), output_dir)
 
     print ("done, total_stock = " + str(len(results)))
