@@ -4,7 +4,7 @@
 {% for item in items %}
     <div>
       <input type="checkbox" id="{{ item.ticker }}" name="{{ item.ticker }}" style="transform:scale(3.0);">
-      <p><a href="{{ item.ticker_url }}">{{ item.ticker }}</a></p><img src="{{ item.chart_path }}"><img src="{{ item.revenue_path }}"><img src="{{ item.operating_income_path }}"><img src="{{ item.net_income_path }}"><img src="{{ item.eps_path }}">
+      <p><a href="{{ item.ticker_url }}" target="_blank">{{ item.ticker }}</a></p><img src="{{ item.chart_path }}"><img src="{{ item.revenue_path }}"><img src="{{ item.operating_income_path }}"><img src="{{ item.net_income_path }}"><img src="{{ item.eps_path }}">
     </div>
 {% endfor %}
     <div>
