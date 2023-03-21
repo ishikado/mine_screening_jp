@@ -39,7 +39,7 @@ def output_sectorinfos(tickers, output_dir):
     for ticker in tickers:
         # query を送りすぎるとアクセス制限をくらうようなので、sleep して間隔をあける
         # 制限をくらいすぎる場合、sleep 間隔を考えたほうがいいかもしれない
-        time.sleep(5)
+        time.sleep(1)
 
         print (ticker) # for debug
         tinfo = Ticker(ticker)
@@ -99,6 +99,7 @@ def main():
     # NOTE: スクリーニング結果を入力に取り、out_html を出力するモードがあってもいいかもしない、もしくはその機能はツールを分離するなど
     #       スクリーニングが実行できても out_html の出力部分で失敗するケースが時々見られるため
     #       html_out だけ debug したいケースも多々あるので、そんな感じにしたい
+    # TODO: outputhtml と output_sectorinfos で yahooquery.Ticker を２回呼び出ししているので１回呼び出して結果をまとめて渡したい、スクリーニングが遅くなる原因となっている
     outputhtml.out_html(results, stock_infos, output_dir, is_jp)
 
     # 企業の情報からsector及びindustryごとに何件screeningされたかを出力する

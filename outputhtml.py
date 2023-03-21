@@ -38,7 +38,7 @@ def draw_finance_common(stmt_field_name, data, out_img, use_ttm):
     income_stmt = data.income_statement()
     qincome_stmt = data.income_statement(frequency="q")
     if not stmt_field_name in income_stmt.columns:
-        # TODO ticker name も出したい
+        # TODO: ticker name も出したい
         print ("failed to draw " + stmt_field_name)
         return
 
@@ -46,7 +46,7 @@ def draw_finance_common(stmt_field_name, data, out_img, use_ttm):
     years = [datetime.datetime.fromtimestamp(k / 1000 / 1000 / 1000).strftime("%Y-%m-%d") for k in income_stmt["asOfDate"].values.tolist()]
     drawed = stmt_field_value.to_list()
 
-    if use_ttm:
+    if use_ttm and not type(qincome_stmt) is str:
         ttm = (qincome_stmt.loc[qincome_stmt["periodType"] == "TTM", :])
         if not ttm.empty and stmt_field_name in ttm.columns:
             drawed.append((ttm.head()[stmt_field_name].iloc[-1]))
@@ -66,7 +66,7 @@ def out_html(tickers, stock_infos, dirname, is_jp):
     for ticker in tickers:
         # query を送りすぎるとアクセス制限をくらうようなので、sleep して間隔をあける
         # 制限をくらいすぎる場合、sleep 間隔を考えたほうがいいかもしれない
-        time.sleep(5)
+        time.sleep(1)
 
         data = yahooquery.Ticker(ticker)
 
