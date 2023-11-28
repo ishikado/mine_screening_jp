@@ -5,6 +5,7 @@ import os
 import datetime
 import yahooquery
 import time
+import pandas as pd
 
 
 from jinja2 import Template, Environment, FileSystemLoader
@@ -36,7 +37,12 @@ def draw_operating_income(data, out_img):
 
 def draw_finance_common(stmt_field_name, data, out_img, use_ttm):
     income_stmt = data.income_statement()
-    qincome_stmt = data.income_statement(frequency="q")
+
+    # income_stmt から最後以外のTTM行を削除する
+    last_row = income_stmt[-1:]
+    income_stmt_without_last = income_stmt[0:len(income_stmt)-1]
+    income_stmt = pd.concat([income_stmt_without_last[income_stmt_without_last["periodType"] != "TTM"], last_row])
+
     if not stmt_field_name in income_stmt.columns:
         # TODO: ticker name も出したい
         print ("failed to draw " + stmt_field_name)
@@ -44,13 +50,10 @@ def draw_finance_common(stmt_field_name, data, out_img, use_ttm):
 
     stmt_field_value = income_stmt[stmt_field_name]
     years = [datetime.datetime.fromtimestamp(k / 1000 / 1000 / 1000).strftime("%Y-%m-%d") for k in income_stmt["asOfDate"].values.tolist()]
-    drawed = stmt_field_value.to_list()
+    if income_stmt["periodType"].to_list()[-1] == "TTM":
+        years[-1] = "TTM"
 
-    if use_ttm and not type(qincome_stmt) is str:
-        ttm = (qincome_stmt.loc[qincome_stmt["periodType"] == "TTM", :])
-        if not ttm.empty and stmt_field_name in ttm.columns:
-            drawed.append((ttm.head()[stmt_field_name].iloc[-1]))
-            years.append("TTM")
+    drawed = stmt_field_value.to_list()
 
     plt.bar(years, drawed, color='b', label = stmt_field_name, width = 0.3)
     plt.title(stmt_field_name)
@@ -85,6 +88,7 @@ def out_html(tickers, stock_infos, dirname, is_jp):
 
         ticker_dir = tickers_dir + "/" + ticker
         os.makedirs(ticker_dir)
+
         draw_eps(data, ticker_dir + "/eps.jpg")
         draw_revenue(data, ticker_dir + "/revenue.jpg")
         draw_operating_income(data, ticker_dir + "/operating_income.jpg")
