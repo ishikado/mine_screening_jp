@@ -1,5 +1,5 @@
 """
-https://disclosure.edinet-fsa.go.jp/E01EW/BLMainController.jsp?uji.verb=W1E62071InitDisplay&uji.bean=ee.bean.W1E62071.EEW1E62071Bean&TID=W1E62071&PID=currentPage&SESSIONKEY=1662729632391&kbn=2&ken=58&res=58&idx=0&start=1&end=58&spf1=1&spf2=1&spf5=1&psr=1&pid=0&row=100&str=&flg=&lgKbn=2&pkbn=0&skbn=1&dskb=&askb=&dflg=0&iflg=0&preId=1
+https://disclosure2.edinet-fsa.go.jp/weee0010.aspx
 の EDINET コードリストの CSV を標準入力で取り、有効な証券コードを返す。
 証券コードをリストアップする際、yahoo finance で読み取れるように、末尾に東証ならT、福証ならF、札証ならSをつける。
 名証は現状未実装なので、東証と同様に T を末尾につけている。
