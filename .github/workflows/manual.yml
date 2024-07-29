@@ -16,7 +16,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Run Python
-        run: python3 screening.py < resources/tickers.data
+        run: python3 screening.py < resources/tickers.dat
       - name: Download artifacts
         uses: actions/upload-artifact@v4
         with:
