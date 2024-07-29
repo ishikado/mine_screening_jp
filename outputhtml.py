@@ -73,14 +73,10 @@ def out_html(tickers, stock_infos, dirname, is_jp):
 
         data = yahooquery.Ticker(ticker)
 
-        # 一部データは finance data が取れず str type の値となるので無視する
+        # 一部データは finance data が取れず dataframe 以外の値となるので無視する
         income_stmt = data.income_statement()
-        if type(income_stmt) is str:
-            print (ticker +  " data is not found, reason = " + income_stmt)
-            continue
-        # NOTE: empty になる場合はないかもしれないが、念の為
-        elif income_stmt.empty:
-            print (ticker +  " data is not found")
+        if type(income_stmt) is pd.DataFrame:
+            print (ticker +  " data is not found, income_stmt is not Dataframe, type is " + type(income_stmt))
             continue
 
         # for debug
