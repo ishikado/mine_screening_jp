@@ -75,7 +75,7 @@ def out_html(tickers, stock_infos, dirname, is_jp):
 
         # 一部データは finance data が取れず dataframe 以外の値となるので無視する
         income_stmt = data.income_statement()
-        if type(income_stmt) is pd.DataFrame:
+        if not type(income_stmt) is pd.DataFrame:
             print (ticker +  " data is not found, income_stmt is not Dataframe, type is " + str(type(income_stmt)))
             continue
 
