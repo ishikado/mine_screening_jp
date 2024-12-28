@@ -20,7 +20,8 @@ import matplotlib.pyplot as plt
 def get_stock_info(ticker):
     # TODO: 株式分割の影響も考慮して計算できるようにしたい
     # 無理なら株式分割が１年以内にある場合はなにか print したほうがいいかもしれない
-    data = yf.download(ticker, period='1y', interval = "1d", threads = False)
+    tk = yf.Ticker(ticker)
+    data = tk.history(period='1y', interval = "1d")
     return data
 
 # input_file_name から ticker を改行で区切った入力を受け取り、ticker を key、yfinance.download の結果を value とした dict を返す
