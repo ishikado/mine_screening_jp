@@ -5,7 +5,7 @@ import yfinance as yf
 def is_satisfied(data, is_jp):
     # 現在の値段を取り出し
     for i, r in data.tail(1).iterrows():
-        price = float(r["Close"])
+        price = float(r.iloc[0])
         
     high_52w = -1
     low_52w = 10000000
@@ -15,24 +15,24 @@ def is_satisfied(data, is_jp):
 
     # 52w(365d)高値
     for i, r in data.iterrows():
-        high_52w = max(high_52w, float(r["High"]))
+        high_52w = max(high_52w, float(r.iloc[1]))
     # 52w(365d)安値
     for i, r in data.iterrows():
-        low_52w = min(low_52w, float(r["Low"]))
+        low_52w = min(low_52w, float(r.iloc[2]))
 
     # sma50
     for i, r in data.tail(50).iterrows():
-        sma50 += float(r["Close"])
+        sma50 += float(r.iloc[0])
     sma50 /= 50
 
     # sma150
     for i, r in data.tail(150).iterrows():
-        sma150 += float(r["Close"])
+        sma150 += float(r.iloc[0])
     sma150 /= 150
 
     # sma200
     for i, r in data.tail(200).iterrows():
-        sma200 += float(r["Close"])
+        sma200 += float(r.iloc[0])
     sma200 /= 200
 
     if is_jp:
