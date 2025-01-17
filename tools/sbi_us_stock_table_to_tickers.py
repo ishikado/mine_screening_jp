@@ -12,12 +12,28 @@ def main():
 #        html = f.read()
     soup = BeautifulSoup(html, 'html.parser')
 
-    for a in soup.find(class_="md-l-table-01 md-l-utl-mt10").tbody.find_all("tr"):
+    tickers = []
+
+    for f in soup.find_all(class_="mgt10"):
+        tbody = f.find("tbody")
+        if not tbody == None:
+            for a in tbody.find_all("tr"):
+                for b in a.find_all(class_="thM alC"):
+                    ticker = b.find(class_="fm01").text
+                    tickers.append(ticker)
+                    #print (ticker)
+
+    # TODO: 普通株式以外の銘柄も取得できるようにする
+    for a in soup.find(class_="foo_table md-l-table-01 md-l-utl-mt10").tbody.find_all("tr"):
         l = []
         for b in a.find_all(class_="vaM alC"):
             l.append(b.text)
         ticker, market = l[0], l[1]
-        print (ticker)
+        tickers.append(ticker)
+    #     print (ticker)
     
+    for ticker in tickers:
+        print (ticker)
+
 
 main()
