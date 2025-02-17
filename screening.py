@@ -32,6 +32,8 @@ def get_stock_infos():
         data = get_stock_info(ticker)
         if not data.empty:
             result_dict[ticker] = data
+        time.sleep(1)
+
     return result_dict
 
 def output_sectorinfos(tickers, output_dir):

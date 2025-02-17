@@ -31,3 +31,7 @@ $ python3 screening.py < tickers.txt
 - jinja2
 - yahooquery
 - urllib3
+
+# ライブラリのインストール
+requirements.txt があるのでこれを使ってインストールしてください。
+venv 等を使って仮想環境を作ってそこにいれることをおすすめします。
