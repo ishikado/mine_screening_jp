@@ -7,6 +7,8 @@ import yahooquery
 import time
 import pandas as pd
 
+from curl_cffi import requests
+
 
 from jinja2 import Template, Environment, FileSystemLoader
 
@@ -71,7 +73,8 @@ def out_html(tickers, stock_infos, dirname, is_jp):
         # 制限をくらいすぎる場合、sleep 間隔を考えたほうがいいかもしれない
         time.sleep(1)
 
-        data = yahooquery.Ticker(ticker)
+        session = requests.Session(impersonate="chrome") # https://github.com/dpguthrie/yahooquery/discussions/314 対応
+        data = yahooquery.Ticker(ticker, session=session)
 
         # 一部データは finance data が取れず dataframe 以外の値となるので無視する
         income_stmt = data.income_statement()
